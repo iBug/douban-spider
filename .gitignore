@@ -19,6 +19,7 @@ node_modules/
 data/
 pages/
 *.txt
+!requirements.txt
 *.html
 *.gz
 *.xz
