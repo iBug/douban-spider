@@ -1,5 +1,6 @@
 import regex
 import scrapy
+from ..items import DoubanItem
 
 
 # One numeric user ID per line, please
@@ -41,7 +42,11 @@ class DoubanSpider(scrapy.Spider):
             if ratingList:
                 rating = ratingList[0].xpath('@class').get()
                 rating = int(regex.search(r"rating(\d*)-t", rating).group(1))
-            yield {'user': userId, 'item': itemId, 'rating': rating}
+            ret = DoubanItem()
+            ret['user'] = userId
+            ret['item'] = itemId
+            ret['rating'] = rating
+            yield ret
 
         for nextPage in response.css('#content div.article div.paginator > span.next > a'):
             yield response.follow(nextPage, self.parse)
