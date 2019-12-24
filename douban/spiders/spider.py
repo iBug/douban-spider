@@ -1,10 +1,14 @@
-import regex
+import os
+import re
 import scrapy
 from ..items import DoubanItem
 
 
+usersPath = os.path.abspath(__file__)
+while not os.path.exists(os.path.join(usersPath, "users.txt")):
+    usersPath = os.path.dirname(usersPath)
 # One numeric user ID per line, please
-with open("douban/targets/users.txt", "r") as f:
+with open(os.path.join(usersPath, "users.txt"), "r") as f:
     users = [int(line) for line in f]
 
 book_urls = [f"https://book.douban.com/people/{user}/collect?mode=list" for user in users]
@@ -34,14 +38,14 @@ class DoubanSpider(scrapy.Spider):
 
     def parse(self, response):
         userId = response.css('#db-usr-profile div.pic img').xpath('@src').get()
-        userId = int(regex.search(r"/u(\d+)", userId).group(1))
+        userId = int(re.search(r"/u(\d+)", userId).group(1))
         for item in response.css('#content div.article ul > li.item'):
             itemId = int(item.xpath('@id').get().lstrip("list"))
             rating = None
             ratingList = item.css('div.date > span')
             if ratingList:
                 rating = ratingList[0].xpath('@class').get()
-                rating = int(regex.search(r"rating(\d*)-t", rating).group(1))
+                rating = int(re.search(r"rating(\d*)-t", rating).group(1))
             ret = DoubanItem()
             ret['user'] = userId
             ret['item'] = itemId
