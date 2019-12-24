@@ -25,9 +25,12 @@ def get_item(user, item_type='book', offset=0):
     }
     response = requests.get(url, params=params, headers=headers)
     if response.status_code != 200:
-        raise RuntimeError(f"Invalid response code: {response.status_code}")
+        raise RuntimeError(f"Invalid response code: {response.status_code} when accessing {url} with params={params} and headers={headers}")
     # Save the page for later analysis
     filename = os.path.join("pages", item_type, f"{user}-{offset}.html")
     with open(filename, "w") as f:
         f.write(response.text())
     return filename
+
+if __name__ == "__main__":
+    get_item('1000030')
