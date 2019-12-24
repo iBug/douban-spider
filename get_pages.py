@@ -18,7 +18,11 @@ def get_item(user, item_type='book', offset=0):
         'mode': "list",
         'tags_sort': "count",
     }
-    headers = {'User-Agent': ua.random}
+    headers = {
+        'X-Forwarded-For': '127.0.0.1',
+        'X-Real-IP': '127.0.0.1',
+        'User-Agent': ua.random,
+    }
     response = requests.get(url, params=params, headers=headers)
     if response.status_code != 200:
         raise RuntimeError(f"Invalid response code: {response.status_code}")
