@@ -3,7 +3,7 @@ import scrapy
 
 
 # One numeric user ID per line, please
-with open("users.txt", "r") as f:
+with open("douban/targets/users.txt", "r") as f:
     users = [int(line) for line in f]
 
 book_urls = [f"https://book.douban.com/people/{user}/collect?mode=list" for user in users]

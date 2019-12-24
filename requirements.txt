@@ -1,3 +1,5 @@
 requests
 fake-useragent
 BeautifulSoup4
+regex
+scrapy
