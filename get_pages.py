@@ -23,6 +23,7 @@ def get_item(user, item_type='book', offset=0):
     if response.status_code != 200:
         raise RuntimeError(f"Invalid response code: {response.status_code}")
     # Save the page for later analysis
-    with open(os.path.join("pages", item_type, f"{user}-{offset}.html"), "w") as f:
+    filename = os.path.join("pages", item_type, f"{user}-{offset}.html")
+    with open(filename, "w") as f:
         f.write(response.text())
-    return True
+    return filename
