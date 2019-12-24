@@ -1,17 +1,24 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Environments
 .env
 .venv
 env/
 venv/
-ENV/
-env.bak/
-venv.bak/
+
+# Ruby
+Gemfile.lock
+vendor/bundle/
+
+# Node.js
+package-lock.json
+node_modules/
 
 # Crawler data
 data/
-*.json
+pages/
+*.txt
+*.html
+*.gz
+*.xz
