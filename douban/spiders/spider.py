@@ -1,4 +1,5 @@
 import os
+import itertools
 import re
 import scrapy
 from ..items import DoubanItem
@@ -21,7 +22,7 @@ movie_urls = [f"https://movie.douban.com/people/{user}/collect?mode=list" for us
 
 class DoubanSpider(scrapy.Spider):
     name = 'doubanspider'
-    start_urls = book_urls + movie_urls
+    start_urls = itertools.chain.from_iterable(zip(book_urls, movie_urls))
 
     # These URLs are for testing only
     #start_urls = ["https://ustc.ibugone.com/data/book/1000030-0.html"]
