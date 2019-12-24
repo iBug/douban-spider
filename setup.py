@@ -3,11 +3,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    name         = 'douban_spider',
+    name         = 'douban',
     version      = '1.0',
     packages     = find_packages(),
     package_data = {
-        'douban_spider': ['users.txt'],
+        'douban': ['users.txt'],
     },
     entry_points = {'scrapy': ['settings = douban.settings']},
 )

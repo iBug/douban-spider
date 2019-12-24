@@ -40,9 +40,11 @@ DOWNLOAD_DELAY = 3
 
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
-   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-   'Accept-Language': 'en',
-   'Referer': 'https://www.douban.com/',
+    'User-Agent': USER_AGENT,
+    'Accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    'Accept-Encoding': "gzip, deflate",
+    'Accept-Language': "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7",
+    'Referer': "https://www.douban.com/",
 }
 
 # Enable or disable spider middlewares
