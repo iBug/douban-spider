@@ -6,8 +6,8 @@ import scrapy
 with open("users.txt", "r") as f:
     users = [int(line) for line in f]
 
-book_urls = [f"https://book.douban.com/people/{user}/collect" for user in users]
-movie_urls = [f"https://movie.douban.com/people/{user}/collect" for user in users]
+book_urls = [f"https://book.douban.com/people/{user}/collect&mode=list" for user in users]
+movie_urls = [f"https://movie.douban.com/people/{user}/collect&mode=list" for user in users]
 
 
 class DoubanSpider(scrapy.Spider):
