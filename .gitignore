@@ -27,3 +27,4 @@ result.json
 *.html
 *.gz
 *.xz
+*.db
