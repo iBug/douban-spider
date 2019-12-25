@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify
 
 
 DB_FILE = "spider.db"
+CONCURRENT_JOBS = 30
 nextId = 0
 
 
@@ -23,12 +24,12 @@ def get_job():
     global nextId
     try:
         db = connect_db()
-        cursor = db.execute("SELECT id, url FROM urls WHERE id > ? ORDER BY id ASC LIMIT 5", [nextId])
+        cursor = db.execute(f"SELECT id, url FROM urls WHERE id > ? ORDER BY id ASC LIMIT {CONCURRENT_JOBS}", [nextId])
         records = cursor.fetchall()
         # No records?
         if not records:
             # Reached end of array, restart from beginning
-            cursor = db.execute("SELECT id, url FROM urls ORDER BY id ASC LIMIT 5")
+            cursor = db.execute(f"SELECT id, url FROM urls ORDER BY id ASC LIMIT {CONCURRENT_JOBS}")
             records = cursor.fetchall()
             if records is None:
                 # We've run out of available URLs

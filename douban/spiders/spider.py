@@ -51,8 +51,6 @@ class DoubanSpider(scrapy.Spider):
 
     def parse(self, response):
         if response.status in [302, 403]:
-            # Send the same URL back
-            response = requests.post(control_url + "/add_url", json={'url': response.request.url})
             # Should stop now
             self.alive = False
 
