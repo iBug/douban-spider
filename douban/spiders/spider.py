@@ -6,7 +6,7 @@ import requests
 from ..items import DoubanItem
 
 
-control_url = "https://sic.ibugone.net"
+control_url = "https://spserver.taokystrong.com"
 
 
 class DoubanSpider(scrapy.Spider):
