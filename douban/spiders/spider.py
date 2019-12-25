@@ -3,7 +3,7 @@ import time
 import re
 import scrapy
 import requests
-from urllib.parse import urlparse
+from urllib.parse import urljoin
 from ..items import DoubanItem
 
 
@@ -74,5 +74,5 @@ class DoubanSpider(scrapy.Spider):
 
         for nextPage in response.css('#content div.article div.paginator > span.next > a'):
             nextUrl = nextPage.xpath('@href').get()
-            nextUrl = urlparse.urljoin(response.request.url, nextUrl)
+            nextUrl = urljoin(response.request.url, nextUrl)
             response = requests.post(control_url + "/add_url", json={'url': nextUrl})
