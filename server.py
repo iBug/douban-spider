@@ -23,19 +23,19 @@ def get_job():
     global nextId
     try:
         db = connect_db()
-        cursor = db.execute("SELECT id, url FROM urls WHERE id > ? ORDER BY id ASC LIMIT 1", [nextId])
-        record = cursor.fetchone()
-        print(record)
-        if record is None:
+        cursor = db.execute("SELECT id, url FROM urls WHERE id > ? ORDER BY id ASC LIMIT 5", [nextId])
+        records = cursor.fetchall()
+        # No records?
+        if not records:
             # Reached end of array, restart from beginning
-            cursor = db.execute("SELECT id, url FROM urls ORDER BY id ASC LIMIT 1")
-            record = cursor.fetchone()
-            print(record)
-            if record is None:
+            cursor = db.execute("SELECT id, url FROM urls ORDER BY id ASC LIMIT 5")
+            records = cursor.fetchall()
+            if records is None:
                 # We've run out of available URLs
                 return jsonify(None)
-        nextId, url = record
-        return jsonify(url)
+        nextId = max([a for a, b in records])
+        urls = [b for a, b in records]
+        return jsonify(urls)
     finally:
         db.close()
 
