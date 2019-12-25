@@ -48,7 +48,7 @@ class DoubanSpider(scrapy.Spider):
         items = []
         for item in response.css('#content div.article ul > li.item'):
             itemId = int(item.xpath('@id').get().lstrip("list"))
-            rating = None
+            rating = 0
             ratingList = item.css('div.date > span')
             if ratingList:
                 rating = ratingList[0].xpath('@class').get()
@@ -56,7 +56,7 @@ class DoubanSpider(scrapy.Spider):
             items.append({
                 'user': userId,
                 'item': itemId,
-                'rating': rating or 0,
+                'rating': rating,
             })
             ret = DoubanItem()
             ret['user'] = userId

@@ -9,6 +9,7 @@ Restart=always
 RestartSec=1
 ExecStart=/usr/local/bin/scrapy crawl doubanspider
 WorkingDirectory=/root/douban-spider/
+TimeoutSec=5
 
 [Install]
 WantedBy=default.target
