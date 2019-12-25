@@ -28,12 +28,14 @@ class DoubanSpider(scrapy.Spider):
             yield scrapy.Request(response.text.strip('{["]}\n\t '))
 
     def parse(self, response):
-        if response.status == 403:
+        if response.status in [302, 403]:
             # Send the same URL back
             response = requests.post(control_url + "/add_url", json={'url': response.request.url})
-            # Throttle for 5 minutes before trying again
-            time.sleep(300)
-            return
+            time.sleep(1)
+            if os.environ.get('SHUTDOWN_ON_ERROR'):
+                os.system('poweroff')
+            else:
+                os._exit(0)
 
         try:
             userId = response.css('#db-usr-profile div.pic img').xpath('@src').get()
