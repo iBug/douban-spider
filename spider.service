@@ -1,0 +1,14 @@
+[Unit]
+Description=Douban Spider
+After=default.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+ExecStart=/usr/local/bin/scrapy crawl doubanspider
+WorkingDirectory=/root/douban-spider/
+
+[Install]
+WantedBy=default.target

@@ -1,28 +1,16 @@
 import os
-import itertools
+import time
 import re
 import scrapy
+import requests
 from ..items import DoubanItem
 
 
-usersPath = os.path.abspath(__file__)
-while not os.path.exists(os.path.join(usersPath, "users.txt")):
-    oldPath = usersPath
-    usersPath = os.path.dirname(usersPath)
-    if usersPath == oldPath:
-        # We're at the root of the directory tree
-        raise FileNotFoundError("No users.txt found")
-# One numeric user ID per line, please
-with open(os.path.join(usersPath, "users.txt"), "r") as f:
-    users = [int(line) for line in f]
-
-book_urls = [f"https://book.douban.com/people/{user}/collect?mode=list" for user in users]
-movie_urls = [f"https://movie.douban.com/people/{user}/collect?mode=list" for user in users]
+control_url = "https://sic.ibugone.net"
 
 
 class DoubanSpider(scrapy.Spider):
     name = 'doubanspider'
-    start_urls = itertools.chain.from_iterable(zip(book_urls, movie_urls))
 
     def start_requests(self):
         return [scrapy.FormRequest(
@@ -32,7 +20,12 @@ class DoubanSpider(scrapy.Spider):
         )]
 
     def start_crawl(self, response):
-        yield from map(scrapy.Request, self.start_urls)
+        while True:
+            response = requests.get(control_url + "/get_url")
+            if response.status_code != 200:
+                time.sleep(5)
+                continue
+            yield response.text().strip('{["]}')
 
     def parse(self, response):
         try:
@@ -52,6 +45,11 @@ class DoubanSpider(scrapy.Spider):
             if ratingList:
                 rating = ratingList[0].xpath('@class').get()
                 rating = int(re.search(r"rating(\d*)-t", rating).group(1))
+            requests.post(control_url + "/add_record", json={
+                'user': userId,
+                'item': itemId,
+                'rating': rating,
+            })
             ret = DoubanItem()
             ret['user'] = userId
             ret['item'] = itemId
@@ -59,4 +57,5 @@ class DoubanSpider(scrapy.Spider):
             yield ret
 
         for nextPage in response.css('#content div.article div.paginator > span.next > a'):
-            yield response.follow(nextPage, self.parse)
+            nextUrl = nextPage.xpath('@href').get()
+            response = requests.post(control_url + "/add_url", json={'url': nextUrl})
