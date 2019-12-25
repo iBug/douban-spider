@@ -28,6 +28,13 @@ class DoubanSpider(scrapy.Spider):
             yield response.text().strip('{["]}')
 
     def parse(self, response):
+        if response.status == 403:
+            # Send the same URL back
+            response = requests.post(control_url + "/add_url", json={'url': response.request.url})
+            # Throttle for 5 minutes before trying again
+            time.sleep(300)
+            return
+
         try:
             userId = response.css('#db-usr-profile div.pic img').xpath('@src').get()
             userId = int(re.search(r"/u(\d+)", userId).group(1))

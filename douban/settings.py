@@ -39,6 +39,10 @@ DOWNLOAD_DELAY = 5
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
 
+# Handle 403 and 404 ourselves
+# Ref: https://stackoverflow.com/a/33972028/5958455
+HTTPERROR_ALLOWED_CODES = [403, 404]
+
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
     'User-Agent': USER_AGENT,
