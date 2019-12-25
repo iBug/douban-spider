@@ -38,6 +38,7 @@ class DoubanSpider(scrapy.Spider):
             except AttributeError:
                 # We're really unlucky now
                 return
+        items = []
         for item in response.css('#content div.article ul > li.item'):
             itemId = int(item.xpath('@id').get().lstrip("list"))
             rating = None
@@ -45,16 +46,17 @@ class DoubanSpider(scrapy.Spider):
             if ratingList:
                 rating = ratingList[0].xpath('@class').get()
                 rating = int(re.search(r"rating(\d*)-t", rating).group(1))
-            requests.post(control_url + "/add_record", json={
+            items.append({
                 'user': userId,
                 'item': itemId,
-                'rating': rating,
+                'rating': rating or 0,
             })
             ret = DoubanItem()
             ret['user'] = userId
             ret['item'] = itemId
             ret['rating'] = rating
             yield ret
+        requests.post(control_url + "/add_records", json=items)
 
         for nextPage in response.css('#content div.article div.paginator > span.next > a'):
             nextUrl = nextPage.xpath('@href').get()
