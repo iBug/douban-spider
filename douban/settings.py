@@ -16,8 +16,8 @@ NEWSPIDER_MODULE = 'douban.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
-#USER_AGENT = __import__('fake_useragent').UserAgent().random
+#USER_AGENT = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+USER_AGENT = __import__('fake_useragent').UserAgent().random
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
