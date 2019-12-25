@@ -2,8 +2,7 @@
 
 import os
 import sqlite3
-import threading
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 
 
 DB_FILE = "spider.db"
@@ -50,7 +49,6 @@ def add_records():
     items = [(x["user"], x["item"], x["rating"]) for x in data]
     try:
         db = connect_db()
-        db_lock.acquire()
         cursor = db.executemany("INSERT INTO records (user, item, rating) VALUES (?, ?, ?)", items)
         db.commit()
     finally:
