@@ -7,7 +7,7 @@ from urllib.parse import urljoin
 from ..items import DoubanItem
 
 
-control_url = os.environ.get("CONTROL_URL", "https://spserver.taokystrong.com")
+control_url = os.environ.get("CONTROL_URL", "https://aspqm.taokystrong.com")
 
 
 class DoubanSpider(scrapy.Spider):
