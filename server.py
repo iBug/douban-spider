@@ -57,7 +57,7 @@ def complete_job():
             db.execute("DELETE FROM urls WHERE url = ?", [oldUrl])
         else:
             db.execute("UPDATE urls SET url = ? WHERE url = ?", [newUrl, oldUrl])
-        db.executemany("INSERT INTO records (user, item rating) VALUES (?, ?, ?)", items)
+        db.executemany("INSERT INTO records (user, item, rating) VALUES (?, ?, ?)", items)
         db.commit()
     finally:
         db.close()
