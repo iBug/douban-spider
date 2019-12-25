@@ -21,6 +21,7 @@ node_modules/
 # Crawler data
 data/
 pages/
+result.json
 *.txt
 !requirements.txt
 *.html

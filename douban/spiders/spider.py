@@ -24,13 +24,27 @@ class DoubanSpider(scrapy.Spider):
     name = 'doubanspider'
     start_urls = itertools.chain.from_iterable(zip(book_urls, movie_urls))
 
-    # These URLs are for testing only
-    #start_urls = ["https://ustc.ibugone.com/data/book/1000030-0.html"]
-    #start_urls = ["https://ustc.ibugone.com/data/movie/1000030-0.html"]
+    def start_requests(self):
+        return [scrapy.FormRequest(
+            "https://accounts.douban.com/j/mobile/login/basic",
+            formdata={'ck': "", 'name': "+33629474120", 'password': "taokystrong1", 'ticket': ""},
+            callback=self.start_crawl,
+        )]
+
+    def start_crawl(self, response):
+        yield from map(scrapy.Request, self.start_urls)
 
     def parse(self, response):
-        userId = response.css('#db-usr-profile div.pic img').xpath('@src').get()
-        userId = int(re.search(r"/u(\d+)", userId).group(1))
+        try:
+            userId = response.css('#db-usr-profile div.pic img').xpath('@src').get()
+            userId = int(re.search(r"/u(\d+)", userId).group(1))
+        except AttributeError:
+            # User has canceled their account, retry from URL
+            try:
+                userId = int(re.search(r"/people/(\d+)/collect", response.request.url).group(1))
+            except AttributeError:
+                # We're really unlucky now
+                return
         for item in response.css('#content div.article ul > li.item'):
             itemId = int(item.xpath('@id').get().lstrip("list"))
             rating = None
