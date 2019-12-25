@@ -8,12 +8,16 @@ from ..items import DoubanItem
 
 
 control_url = "https://spserver.taokystrong.com"
-# Suicide after first 302 / 403
-alive = True
 
 
 class DoubanSpider(scrapy.Spider):
     name = 'doubanspider'
+
+    def __init__(self):
+        # Suicide after first 302 / 403
+        self.alive = True
+        # Failure count
+        self.fc = 0
 
     def start_requests(self):
         return [scrapy.FormRequest(
@@ -23,11 +27,15 @@ class DoubanSpider(scrapy.Spider):
         )]
 
     def start_crawl(self, response):
-        while alive:
+        while self.alive:
             response = requests.get(control_url + "/get_url")
             if response.status_code != 200:
+                if self.fc >= 5:
+                    self.alive = False
                 time.sleep(5)
+                self.fc += 1
                 continue
+            self.fc = 0
             yield scrapy.Request(response.text.strip('{["]}\n\t '))
 
     def closed(*args, **kwargs):
@@ -40,12 +48,12 @@ class DoubanSpider(scrapy.Spider):
             # Send the same URL back
             response = requests.post(control_url + "/add_url", json={'url': response.request.url})
             # Should stop now
-            alive = False
+            self.alive = False
 
         try:
             userId = response.css('#db-usr-profile div.pic img').xpath('@src').get()
             userId = int(re.search(r"/u(\d+)", userId).group(1))
-        except AttributeError:
+        except TypeError, AttributeError:
             # User has canceled their account, retry from URL
             try:
                 userId = int(re.search(r"/people/(\d+)/collect", response.request.url).group(1))
