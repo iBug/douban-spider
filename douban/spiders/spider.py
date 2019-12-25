@@ -7,7 +7,7 @@ from urllib.parse import urljoin
 from ..items import DoubanItem
 
 
-control_url = "https://spserver.taokystrong.com"
+control_url = os.environ.get("CONTROL_URL", "https://spserver.taokystrong.com")
 
 
 class DoubanSpider(scrapy.Spider):
@@ -28,7 +28,7 @@ class DoubanSpider(scrapy.Spider):
 
     def start_crawl(self, response):
         while self.alive:
-            response = requests.get(control_url + "/get_url")
+            response = requests.get(control_url + "/get_job")
             if response.status_code != 200:
                 if self.fc >= 5:
                     self.alive = False
@@ -36,7 +36,13 @@ class DoubanSpider(scrapy.Spider):
                 self.fc += 1
                 continue
             self.fc = 0
-            yield scrapy.Request(response.text.strip('{["]}\n\t '))
+            jobs = response.json()
+            if isinstance(jobs, list):
+                yield from map(scrapy.Request, jobs)
+            elif jobs:
+                yield scrapy.Request(jobs)
+            else:
+                break
 
     def closed(*args, **kwargs):
         # Scrapy 1.7+: Called when spider is closed
@@ -53,12 +59,17 @@ class DoubanSpider(scrapy.Spider):
         try:
             userId = response.css('#db-usr-profile div.pic img').xpath('@src').get()
             userId = int(re.search(r"/u(\d+)", userId).group(1))
-        except TypeError, AttributeError:
+        except (TypeError, AttributeError):
             # User has canceled their account, retry from URL
             try:
                 userId = int(re.search(r"/people/(\d+)/collect", response.request.url).group(1))
             except AttributeError:
                 # We're really unlucky now
+                requests.post(control_url + "/complete_job", json={
+                    'oldUrl': response.request.url,
+                    'newUrl': None,
+                    'items': [],
+                })
                 return
         items = []
         for item in response.css('#content div.article ul > li.item'):
@@ -78,9 +89,15 @@ class DoubanSpider(scrapy.Spider):
             ret['item'] = itemId
             ret['rating'] = rating
             yield ret
-        requests.post(control_url + "/add_records", json=items)
 
+        nextUrl = None
         for nextPage in response.css('#content div.article div.paginator > span.next > a'):
             nextUrl = nextPage.xpath('@href').get()
             nextUrl = urljoin(response.request.url, nextUrl)
-            response = requests.post(control_url + "/add_url", json={'url': nextUrl})
+            # We're not expecting multiple "next page"s
+            break
+        requests.post(control_url + "/complete_job", json={
+            'oldUrl': response.request.url,
+            'newUrl': nextUrl,
+            'items': items,
+        })
