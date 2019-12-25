@@ -3,6 +3,7 @@ import time
 import re
 import scrapy
 import requests
+from urllib.parse import urlparse
 from ..items import DoubanItem
 
 
@@ -29,7 +30,7 @@ class DoubanSpider(scrapy.Spider):
                 continue
             yield scrapy.Request(response.text.strip('{["]}\n\t '))
 
-    def closed(reason):
+    def closed(*args, **kwargs):
         # Scrapy 1.7+: Called when spider is closed
         if os.environ.get('SHUTDOWN_ON_ERROR'):
             os.system('poweroff')
@@ -73,4 +74,5 @@ class DoubanSpider(scrapy.Spider):
 
         for nextPage in response.css('#content div.article div.paginator > span.next > a'):
             nextUrl = nextPage.xpath('@href').get()
+            nextUrl = urlparse.urljoin(response.request.url, nextUrl)
             response = requests.post(control_url + "/add_url", json={'url': nextUrl})
