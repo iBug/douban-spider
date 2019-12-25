@@ -25,7 +25,7 @@ class DoubanSpider(scrapy.Spider):
             if response.status_code != 200:
                 time.sleep(5)
                 continue
-            yield scrapy.Request(response.text.strip('{["]}'))
+            yield scrapy.Request(response.text.strip('{["]}\n\t '))
 
     def parse(self, response):
         if response.status == 403:
