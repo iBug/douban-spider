@@ -37,10 +37,12 @@ class DoubanSpider(scrapy.Spider):
                 continue
             self.fc = 0
             jobs = response.json()
+            meta = {'dont_redirect': True}
             if isinstance(jobs, list):
-                yield from map(scrapy.Request, jobs)
+                for job in jobs:
+                    yield scrapy.Request(job, meta=meta)
             elif jobs:
-                yield scrapy.Request(jobs)
+                yield scrapy.Request(jobs, meta=meta)
             else:
                 break
 
