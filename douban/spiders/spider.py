@@ -7,6 +7,8 @@ from ..items import DoubanItem
 
 
 control_url = "https://spserver.taokystrong.com"
+# Suicide after first 302 / 403
+alive = True
 
 
 class DoubanSpider(scrapy.Spider):
@@ -20,22 +22,24 @@ class DoubanSpider(scrapy.Spider):
         )]
 
     def start_crawl(self, response):
-        while True:
+        while alive:
             response = requests.get(control_url + "/get_url")
             if response.status_code != 200:
                 time.sleep(5)
                 continue
             yield scrapy.Request(response.text.strip('{["]}\n\t '))
 
+    def closed(reason):
+        # Scrapy 1.7+: Called when spider is closed
+        if os.environ.get('SHUTDOWN_ON_ERROR'):
+            os.system('poweroff')
+
     def parse(self, response):
         if response.status in [302, 403]:
             # Send the same URL back
             response = requests.post(control_url + "/add_url", json={'url': response.request.url})
-            time.sleep(1)
-            if os.environ.get('SHUTDOWN_ON_ERROR'):
-                os.system('poweroff')
-            else:
-                os._exit(0)
+            # Should stop now
+            alive = False
 
         try:
             userId = response.css('#db-usr-profile div.pic img').xpath('@src').get()
