@@ -7,6 +7,7 @@ StartLimitIntervalSec=0
 Type=simple
 Restart=always
 RestartSec=1
+ExecStartPre=/usr/bin/git -C /root/douban-spider pull
 ExecStart=/usr/local/bin/scrapy crawl doubanspider
 WorkingDirectory=/root/douban-spider/
 TimeoutSec=5
