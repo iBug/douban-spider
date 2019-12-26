@@ -101,3 +101,4 @@ class DoubanSpider(scrapy.Spider):
             'newUrl': nextUrl,
             'items': items,
         })
+        yield response.follow(nextUrl, self.parse)
