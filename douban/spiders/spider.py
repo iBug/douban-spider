@@ -12,39 +12,37 @@ control_url = os.environ.get("CONTROL_URL", "https://aspqm.taokystrong.com")
 
 class DoubanSpider(scrapy.Spider):
     name = 'doubanspider'
+    start_urls = """
+https://movie.douban.com/people/dengyigeren/collect?start=6120&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/grinch/collect?start=5370&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/1256612/collect?start=6000&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/a371623866/collect?start=6360&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/1320272/collect?start=6270&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/glim/collect?start=5640&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/luoying6/collect?start=6150&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/funkerv/collect?start=5070&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/ljq513/collect?start=6960&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/mafeisan/collect?start=6600&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/sun1987/collect?start=5130&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/ayumiH/collect?start=7140&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/vivifyvivi/collect?start=6090&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/Yeatsilence/collect?start=5850&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/2040298/collect?start=6150&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/haight/collect?start=6210&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/wendan/collect?start=6090&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/louxing/collect?start=5550&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/RiveGauche/collect?start=6240&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/laomianren/collect?start=6900&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/lsd_XY/collect?start=6120&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/flowermumu/collect?start=5550&sort=time&rating=all&filter=all&mode=list
+https://movie.douban.com/people/vyajana/collect?start=6570&sort=time&rating=all&filter=all&mode=list
+    """.strip().split()
 
     def __init__(self):
         # Suicide after first 302 / 403
         self.alive = True
         # Failure count
         self.fc = 0
-
-    def start_requests(self):
-        return [scrapy.FormRequest(
-            "https://accounts.douban.com/j/mobile/login/basic",
-            formdata={'ck': "", 'name': "+33629474120", 'password': "taokystrong1", 'ticket': ""},
-            callback=self.start_crawl,
-        )]
-
-    def start_crawl(self, response):
-        while self.alive:
-            response = requests.get(control_url + "/get_job")
-            if response.status_code != 200:
-                if self.fc >= 5:
-                    self.alive = False
-                time.sleep(5)
-                self.fc += 1
-                continue
-            self.fc = 0
-            jobs = response.json()
-            meta = {'dont_redirect': True}
-            if isinstance(jobs, list):
-                for job in jobs:
-                    yield scrapy.Request(job, meta=meta)
-            elif jobs:
-                yield scrapy.Request(jobs, meta=meta)
-            else:
-                break
 
     def closed(*args, **kwargs):
         # Scrapy 1.7+: Called when spider is closed
