@@ -8,7 +8,7 @@ ExecStartPre=/usr/bin/git -C /root/spider pull
 ExecStart=/usr/bin/python3 main.py
 WorkingDirectory=/root/spider/
 TimeoutSec=5
-Environment="FLOCK_MODE=true"
+Environment="SWARM_MODE=true"
 
 # Warning Warning Warning
 #ExecStopPost=/usr/bin/systemctl poweroff

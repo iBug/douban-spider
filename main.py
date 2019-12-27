@@ -19,11 +19,12 @@ def log(s):
     print(s, file=log_file)
 
 
-def get_item(user, item_type='book', offset=0):
+def get_item(job_id, user, item_type='book', page=0):
+    item_name = ['book', 'movie'][item_type]
     url = f"https://{item_type}.douban.com/people/{user}/collect"
     params = {
         'sort': "time",
-        'start': str(offset),
+        'start': str(page * 30),
         'filter': "all",
         'mode': "list",
         'tags_sort': "count",
@@ -41,6 +42,9 @@ def get_item(user, item_type='book', offset=0):
         with open("should_reboot", "w") as f:
             pass
         os._exit(1)
+    elif response.status_code == 404:
+        # TODO: report user 404
+        return
     elif response.status_code != 200:
         log(f"<{response.status_code}> {url!r}, params={params}, headers={headers}")
         return
@@ -63,10 +67,11 @@ def get_item(user, item_type='book', offset=0):
         items.append({'item': itemId, 'rating': rating})
 
     result = {
+        'id': job_id,
         'user': user,
         'type': item_type,
         'total': total,
-        'offset': offset,
+        'page': page,
         'items': items,
     }
     try:
@@ -77,7 +82,10 @@ def get_item(user, item_type='book', offset=0):
 
 
 def main():
-    pass
+    while True:
+        jobs = requests.get(control_url + "/get-jobs").json()
+        for job in jobs:
+            get_item(job['id'], job['user'], job['type'], job['page'])
 
 
 if __name__ == "__main__":
