@@ -70,7 +70,7 @@ def run_job(job):
     total = soup.select_one("#content div.article div.mode > span.subject-num")
     if not total:
         # Error
-        log("No total number available")
+        log(f"No total number available for user {user}")
         return
     total = int(re.search(r"(\d+)$", total.text.strip()).group(1))
     items = []
