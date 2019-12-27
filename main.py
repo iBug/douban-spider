@@ -4,6 +4,7 @@ import sys
 import os
 import re
 import requests
+from urllib.parse import urljoin
 from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 
@@ -19,9 +20,9 @@ def log(s):
     print(s, file=log_file)
 
 
-def get_item(job_id, user, item_type='book', page=0):
+def get_item(job_id, user, item_type=0, page=0):
     item_name = ['book', 'movie'][item_type]
-    url = f"https://{item_type}.douban.com/people/{user}/collect"
+    url = f"https://{item_name}.douban.com/people/{user}/collect"
     params = {
         'sort': "time",
         'start': str(page * 30),
@@ -91,9 +92,7 @@ def get_item(job_id, user, item_type='book', page=0):
 
 def main():
     while True:
-        response = requests.get(control_url + "/get-jobs")
-        print(response)
-        jobs = response.json()
+        jobs = requests.get(control_url + "/get-jobs").json()
         for job in jobs:
             get_item(job['id'], job['user'], job['type'], job['page'])
 
