@@ -46,7 +46,7 @@ def run_job(job):
         'Referer': "https://www.douban.com/",
     }
     response = requests.get(url, params=params, headers=headers, allow_redirects=False)
-    if response.status_code in [302, 403]:
+    if response.status_code in [302, 403] or response.text[:16].lstrip().startswith('<script>'):
         # Kill
         with open("should_reboot", "w") as f:
             pass
