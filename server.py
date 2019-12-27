@@ -52,6 +52,7 @@ def add_result():
         name = ["books", "movies"][data['type']]
         c.execute("UPDATE jobs SET completed = 0 WHERE id = %s", [data['id']])
         c.execute(f"UPDATE users SET {name} = %s WHERE id = %s", [data['total'], data['user']])
+        c.commit()
         return jsonify({}), 200
     finally:
         c.close()
