@@ -84,7 +84,8 @@ def get_item(job_id, user, item_type=0, page=0):
         'items': items,
     }
     try:
-        requests.post(control_url + "/add-result", json=result)
+        response = requests.post(control_url + "/add-result", json=result)
+        print(response.status_code)
     except Exception:
         pass
     return result

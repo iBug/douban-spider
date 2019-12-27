@@ -50,8 +50,8 @@ def add_result():
         if data['type'] not in [0, 1]:
             return "", 400
         name = ["books", "movies"][data['type']]
-        c.execute("UPDATE jobs SET completed = 0 WHERE id = ?", [data['job_id']])
-        c.execute(f"UPDATE users SET {name} = ? WHERE id = ?", [data['total'], data['user']])
+        c.execute("UPDATE jobs SET completed = 0 WHERE id = %s", [data['id']])
+        c.execute(f"UPDATE users SET {name} = %s WHERE id = %s", [data['total'], data['user']])
         return jsonify({}), 200
     finally:
         c.close()
