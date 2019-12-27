@@ -47,7 +47,7 @@ def get_item(job_id, user, item_type='book', page=0):
             'id': job_id,
             'user': user,
             'type': item_type,
-            'total': -1, # User not exists
+            'total': -1,  # user does not exist
         }
         try:
             requests.post(control_url + "/add-result", json=result)
@@ -91,7 +91,9 @@ def get_item(job_id, user, item_type='book', page=0):
 
 def main():
     while True:
-        jobs = requests.get(control_url + "/get-jobs").json()
+        response = requests.get(control_url + "/get-jobs")
+        print(response)
+        jobs = response.json()
         for job in jobs:
             get_item(job['id'], job['user'], job['type'], job['page'])
 
