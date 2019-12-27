@@ -48,9 +48,10 @@ def run_job(job):
     response = requests.get(url, params=params, headers=headers, allow_redirects=False)
     if response.status_code in [302, 403] or response.text[:16].lstrip().startswith('<script>'):
         # Kill
-        with open("should_reboot", "w") as f:
-            pass
-        os._exit(1)
+        if 'SWARM_MODE' in os.environ:
+            os.system("poweroff")
+        else:
+            os._exit(1)
     elif response.status_code == 404:
         result = {
             'id': job_id,
