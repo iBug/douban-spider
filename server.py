@@ -36,7 +36,7 @@ def get_jobs():
                 raise ValueError("No more jobs available")
         result = c.fetchall()
         job_id = max([i[0] for i in result])
-        return jsonify([{'id': i, 'user': a, 'type': b, 'page': c} for i, a, b, c in result])
+        return jsonify([{'id': s, 'user': a, 'type': b, 'page': c} for s, a, b, c in result])
     finally:
         c.close()
 

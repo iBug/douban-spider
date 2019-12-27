@@ -20,7 +20,11 @@ def log(s):
     print(s, file=log_file)
 
 
-def get_item(job_id, user, item_type=0, page=0):
+def run_job(job):
+    job_id = job['id']
+    user = job['user']
+    item_type = job['type']
+    page = job['page']
     item_name = ['book', 'movie'][item_type]
     url = f"https://{item_name}.douban.com/people/{user}/collect"
     params = {
@@ -95,7 +99,7 @@ def main():
     while True:
         jobs = requests.get(control_url + "/get-jobs").json()
         for job in jobs:
-            get_item(job['id'], job['user'], job['type'], job['page'])
+            run_job(job)
 
 
 if __name__ == "__main__":
