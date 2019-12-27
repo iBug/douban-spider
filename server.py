@@ -20,7 +20,7 @@ app = Flask(__name__)
 job_id = 0
 
 
-@app.route("/get-jobs", methods=["GET"])
+@app.route("/get-jobs", methods=["GET", "POST"])
 def get_jobs():
     global job_id
     try:

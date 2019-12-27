@@ -2,7 +2,10 @@
 
 import sys
 import os
+import time
 import re
+import threading
+import queue
 import requests
 from urllib.parse import urljoin
 from fake_useragent import UserAgent
@@ -12,6 +15,7 @@ from bs4 import BeautifulSoup
 ua = UserAgent()
 control_url = "https://gjpqy.taokystrong.com"
 log_file = open("spider.log", "a")
+jobs_queue = queue.Queue()
 
 
 def log(s):
@@ -95,11 +99,26 @@ def run_job(job):
     return result
 
 
-def main():
+def thread_main(job):
     while True:
-        jobs = requests.get(control_url + "/get-jobs").json()
-        for job in jobs:
-            run_job(job)
+        job = jobs_queue.get(j)
+        run_job(job)
+
+
+def main():
+    N = 4
+    threads = []
+    for i in range(N):
+        th = threading.Thread(target=thread_main)
+        threads.append(th)
+        th.start()
+    while True:
+        if jobs_queue.qsize() < N:
+            more = requests.post(control_url + "/get-jobs").json()
+            for job in more:
+                jobs_queue.put_nowait(job)
+        else:
+            time.sleep(1)
 
 
 if __name__ == "__main__":
