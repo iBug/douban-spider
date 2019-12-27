@@ -50,9 +50,13 @@ def add_result():
         data = request.json
         if data['type'] not in [0, 1]:
             return "", 400
-        name = ["books", "movies"][data['type']]
+        #name = ["books", "movies"][data['type']]
+        #c.execute(f"UPDATE users SET {name} = %s WHERE id = %s", [data['total'], data['user']])
+
         c.execute("UPDATE jobs SET completed = 1 WHERE id = %s", [data['id']])
-        c.execute(f"UPDATE users SET {name} = %s WHERE id = %s", [data['total'], data['user']])
+        user = data['user']
+        c.executemany("INSERT IGNORE INTO records (user, item, rating) VALUES (%s, %s, %s)",
+            [(user, item['item'], item['rating']) for item in data['items']])
         db.commit()
         return jsonify({}), 200
     finally:

@@ -113,12 +113,14 @@ def main():
     N = 4
     threads = []
     for i in range(N):
-        th = threading.Thread(target=thread_main)
+        th = threading.Thread(target=thread_main, daemon=True)
         threads.append(th)
         th.start()
     while True:
         if jobs_queue.qsize() < N:
             more = requests.post(control_url + "/get-jobs").json()
+            if not more:
+                time.sleep(1)
             for job in more:
                 jobs_queue.put_nowait(job)
         else:
