@@ -1,0 +1,15 @@
+[Unit]
+Description=Douban Spider Master
+After=multi-user.target
+StartLimitIntervalSec=1
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=3
+ExecStartPre=/usr/bin/git -C /root/spider pull
+ExecStart=/usr/bin/gunicorn3 -w 4 -b 0.0.0.0:5000 server:app
+WorkingDirectory=/root/spider/
+
+[Install]
+WantedBy=multi-user.target
