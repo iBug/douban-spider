@@ -99,9 +99,9 @@ def run_job(job):
     return result
 
 
-def thread_main(job):
+def thread_main():
     while True:
-        job = jobs_queue.get(j)
+        job = jobs_queue.get()
         run_job(job)
 
 
