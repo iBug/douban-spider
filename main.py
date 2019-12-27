@@ -43,8 +43,16 @@ def get_item(job_id, user, item_type='book', page=0):
             pass
         os._exit(1)
     elif response.status_code == 404:
-        # TODO: report user 404
-        return
+        result = {
+            'id': job_id,
+            'user': user,
+            'type': item_type,
+            'total': -1, # User not exists
+        }
+        try:
+            requests.post(control_url + "/add-result", json=result)
+        except Exception:
+            pass
     elif response.status_code != 200:
         log(f"<{response.status_code}> {url!r}, params={params}, headers={headers}")
         return

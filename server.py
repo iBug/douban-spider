@@ -25,11 +25,11 @@ def get_jobs():
     global job_id
     try:
         c = connect_db().cursor()
-        rows = c.execute("SELECT id, user, type, page FROM jobs WHERE id > ? AND completed = 0 AND invalid = 0 LIMIT ?", (job_id, 5))
+        rows = c.execute("SELECT id, user, type, page FROM jobs WHERE id > ? AND completed = 0 AND invalid = 0 LIMIT 5", [job_id])
         if not rows:
             c.fetchall()
             job_id = 0
-            rows = c.execute("SELECT id, user, type, page FROM jobs WHERE id > ? AND completed = 0 AND invalid = 0 LIMIT ?", (job_id, 5))
+            rows = c.execute("SELECT id, user, type, page FROM jobs WHERE id > ? AND completed = 0 AND invalid = 0 LIMIT 5", [job_id])
             if not rows:
                 # No more jobs
                 raise ValueError("No more jobs available")
