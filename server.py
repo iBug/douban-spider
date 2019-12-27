@@ -45,14 +45,15 @@ def get_jobs():
 def add_result():
     global job_id
     try:
-        c = connect_db().cursor()
+        db = connect_db()
+        c = db.cursor()
         data = request.json
         if data['type'] not in [0, 1]:
             return "", 400
         name = ["books", "movies"][data['type']]
         c.execute("UPDATE jobs SET completed = 0 WHERE id = %s", [data['id']])
         c.execute(f"UPDATE users SET {name} = %s WHERE id = %s", [data['total'], data['user']])
-        c.commit()
+        db.commit()
         return jsonify({}), 200
     finally:
         c.close()
