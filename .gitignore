@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+env/
+venv/
+
+build/
+*.egg-info/
+
+# Ruby
+Gemfile.lock
+vendor/bundle/
+
+# Node.js
+package-lock.json
+node_modules/
+
+# Crawler data
+data/
+pages/
+result.json
+*.txt
+!requirements.txt
+*.html
+*.gz
+*.xz
+*.db
+
+# Logs
+*.log

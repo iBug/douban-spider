@@ -1,0 +1,17 @@
+[Unit]
+Description=Douban Spider
+After=network.target
+
+[Service]
+Type=simple
+ExecStartPre=/usr/bin/git -C /root/spider pull
+ExecStart=/usr/bin/python3 main.py
+WorkingDirectory=/root/spider/
+TimeoutSec=5
+Environment="FLOCK_MODE=true"
+
+# Warning Warning Warning
+#ExecStopPost=/usr/bin/systemctl poweroff
+
+[Install]
+WantedBy=multi-user.target
