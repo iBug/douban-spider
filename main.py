@@ -71,6 +71,8 @@ def run_job(job):
     if not total:
         # Error
         log(f"No total number available for user {user}")
+        with open("/tmp/{user}.html", "wb") as f:
+            f.write(response.content)
         return
     total = int(re.search(r"(\d+)$", total.text.strip()).group(1))
     items = []
